@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#F5F2EB"/><rect x="365" y="105" width="470" height="550" rx="28" fill="#FFFDF8" stroke="#D8D2C7" stroke-width="2"/>
+  <rect x="554" y="160" width="92" height="92" rx="24" fill="#C9A84C"/><text x="600" y="219" text-anchor="middle" font-family="Arial" font-size="31" font-weight="700" fill="#1A3A5C">CA</text>
+  <text x="600" y="315" text-anchor="middle" font-family="Georgia" font-size="40" fill="#1A3A5C">Bienvenido</text><text x="600" y="353" text-anchor="middle" font-family="Arial" font-size="17" fill="#68747E">Registro de asistencia y seguimiento pastoral</text>
+  <rect x="430" y="414" width="340" height="60" rx="12" fill="#1A3A5C"/><text x="600" y="451" text-anchor="middle" font-family="Arial" font-size="17" font-weight="700" fill="white">Continuar con Google</text>
+  <rect x="430" y="504" width="340" height="72" rx="12" fill="#F0ECE3"/><text x="450" y="535" font-family="Arial" font-size="14" font-weight="700" fill="#1A3A5C">Acceso protegido</text><text x="450" y="558" font-family="Arial" font-size="13" fill="#6A747C">Solo cuentas corporativas o autorizadas.</text>
+  <text x="44" y="55" font-family="Arial" font-size="18" font-weight="700" fill="#8A6E26">WIREFRAME · LOGIN</text>
+</svg>

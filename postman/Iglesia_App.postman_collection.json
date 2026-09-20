@@ -1,0 +1,53 @@
+{
+  "info": {
+    "name": "Iglesia App - API crítica",
+    "description": "Pruebas del flujo de escaneo, miembros, dashboard y reportes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000/api" },
+    { "key": "token", "value": "demo-token" },
+    { "key": "cedulaNueva", "value": "1000000001" }
+  ],
+  "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+  "item": [
+    {
+      "name": "Asistencia",
+      "item": [
+        {
+          "name": "Escanear miembro existente",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"datosEscaneo\": \"1012345678 ROJAS PEREZ SOFIA ELENA F 19920618 O+\"\n}" }, "url": "{{baseUrl}}/asistencias/escanear" }
+        },
+        {
+          "name": "Validar formato inválido",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"datosEscaneo\": \"DOCUMENTO INCOMPLETO\"\n}" }, "url": "{{baseUrl}}/asistencias/escanear" }
+        }
+      ]
+    },
+    {
+      "name": "Miembros",
+      "item": [
+        {
+          "name": "Crear miembro nuevo",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"cedula\": \"{{cedulaNueva}}\",\n  \"nombres\": \"Andrea Lucía\",\n  \"apellidos\": \"Gómez Ruiz\",\n  \"celular\": \"3000000000\",\n  \"fechaNacimiento\": \"1995-04-17\",\n  \"sexo\": \"F\",\n  \"etapa\": \"Nueva\",\n  \"lugarNacimiento\": \"Bogotá\",\n  \"direccion\": \"Dato ficticio\",\n  \"correo\": \"andrea@example.com\",\n  \"localidad\": \"Suba\",\n  \"reunionZonal\": \"Norte 1\"\n}" }, "url": "{{baseUrl}}/miembros/nuevos" }
+        },
+        {
+          "name": "Listar nuevos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/miembros/nuevos" }
+        },
+        {
+          "name": "Mover a antiguos",
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"lider\": \"Daniel Rojas\"\n}" }, "url": "{{baseUrl}}/miembros/nuevos/{{cedulaNueva}}/mover" }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "request": { "method": "GET", "url": "{{baseUrl}}/dashboard?fecha=2026-08-28" }
+    },
+    {
+      "name": "Vista previa de reportes",
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"fecha\": \"2026-08-23\",\n  \"domingos\": 2\n}" }, "url": "{{baseUrl}}/reportes/inasistencia/preview" }
+    }
+  ]
+}

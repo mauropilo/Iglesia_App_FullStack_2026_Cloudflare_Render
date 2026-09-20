@@ -1,0 +1,30 @@
+import { Router } from "express";
+import rateLimit from "express-rate-limit";
+import * as asistencia from "../controllers/attendanceController.js";
+import * as miembros from "../controllers/memberController.js";
+import * as lideres from "../controllers/leaderController.js";
+import * as dashboard from "../controllers/dashboardController.js";
+import * as reportes from "../controllers/reportController.js";
+import * as configuracion from "../controllers/configController.js";
+import * as archivos from "../controllers/uploadController.js";
+import { autenticar, autorizar } from "../middlewares/auth.js";
+
+export const rutas = Router();
+const limiteEscaneo = rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: "draft-8", legacyHeaders: false });
+
+rutas.use(autenticar);
+rutas.post("/asistencias/escanear", autorizar("administrador", "registro"), limiteEscaneo, asistencia.scan);
+rutas.get("/dashboard", autorizar("administrador", "hostess"), dashboard.summary);
+rutas.get("/miembros/nuevos", autorizar("administrador", "registro"), miembros.listNew);
+rutas.post("/miembros/nuevos", autorizar("administrador", "registro"), miembros.createNew);
+rutas.post("/miembros/nuevos/:cedula/mover", autorizar("administrador"), miembros.moveToOld);
+rutas.put("/miembros/:cedula/foto", autorizar("administrador", "registro"), miembros.updatePhoto);
+rutas.post("/archivos/fotos/firma", autorizar("administrador", "registro"), archivos.signPhoto);
+rutas.get("/lideres", autorizar("administrador", "registro"), lideres.list);
+rutas.post("/lideres", autorizar("administrador"), lideres.create);
+rutas.put("/lideres/:fila", autorizar("administrador"), lideres.update);
+rutas.delete("/lideres/:fila", autorizar("administrador"), lideres.remove);
+rutas.get("/configuracion", autorizar("administrador"), configuracion.getConfig);
+rutas.put("/configuracion", autorizar("administrador"), configuracion.updateConfig);
+rutas.post("/reportes/inasistencia/preview", autorizar("administrador"), reportes.preview);
+rutas.post("/reportes/inasistencia/enviar", autorizar("administrador"), reportes.send);

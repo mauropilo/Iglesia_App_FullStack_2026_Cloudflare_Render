@@ -1,0 +1,14 @@
+{
+  "name": "iglesia-app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "test": "npm run test -w backend",
+    "build": "npm run build -w backend && npm run build -w frontend"
+  },
+  "devDependencies": { "concurrently": "^9.2.1" }
+}
