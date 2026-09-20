@@ -4,7 +4,7 @@ Aplicación web para registrar asistencia mediante un lector Newland configurado
 
 ## Estado del entregable
 
-El repositorio incluye un **MVP funcional** con modo de demostración y una integración preparada para Google Sheets, Firebase Auth, Cloudinary y Resend. La infraestructura recomendada es Cloudflare Pages para el frontend y Render para la API. Antes de usar datos reales deben configurarse las credenciales, reglas de acceso, consentimiento de tratamiento de datos, copias de seguridad y una prueba piloto controlada.
+El repositorio incluye un **MVP funcional** con modo de demostración y una integración preparada para Google Sheets, Firebase Auth, Cloudinary y Resend. La infraestructura recomendada es Cloudflare Workers Static Assets para el frontend y Render para la API. Antes de usar datos reales deben configurarse las credenciales, reglas de acceso, consentimiento de tratamiento de datos, copias de seguridad y una prueba piloto controlada.
 
 > Google Sheets es adecuado para un piloto de volumen moderado. No ofrece transacciones ni restricciones únicas como una base relacional. Para varias sedes, múltiples servidores o alta concurrencia, migra a MySQL/PostgreSQL siguiendo `docs/MIGRACION_MYSQL.md`.
 
@@ -106,10 +106,10 @@ La guía completa está en [DESPLIEGUE_CLOUDFLARE_RENDER.md](docs/DESPLIEGUE_CLO
 Resumen:
 
 - Backend: Render Web Service usando `render.yaml`.
-- Frontend: Cloudflare Pages, raíz `frontend`, build `npm run build`, salida `dist`.
-- `FRONTEND_URLS` contiene el dominio de Cloudflare Pages.
+- Frontend: Cloudflare Workers Static Assets, raíz `frontend`, build `npm run build`, deploy `npx wrangler deploy`.
+- `FRONTEND_URLS` contiene el dominio `workers.dev` asignado por Cloudflare.
 - `VITE_API_URL` contiene el dominio de Render seguido de `/api`.
-- El archivo `frontend/public/_redirects` permite abrir directamente las rutas de React.
+- `frontend/wrangler.jsonc` configura las rutas de React en modo `single-page-application`.
 
 ## Demo visual
 

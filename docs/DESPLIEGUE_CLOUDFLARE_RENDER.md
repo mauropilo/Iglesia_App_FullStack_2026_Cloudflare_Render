@@ -1,6 +1,6 @@
-# Despliegue gratuito: Cloudflare Pages + Render
+# Despliegue gratuito: Cloudflare Workers Static Assets + Render
 
-Esta guía publica el frontend React/Vite en Cloudflare Pages y la API Express en Render. Incluye dos recorridos:
+Esta guía publica el frontend React/Vite en Cloudflare Workers Static Assets y la API Express en Render. Incluye dos recorridos:
 
 - **Demo:** no usa datos reales y permite comprobar el despliegue.
 - **Producción piloto:** activa Firebase Auth, Google Sheets, Cloudinary y Resend.
@@ -9,7 +9,7 @@ Esta guía publica el frontend React/Vite en Cloudflare Pages y la API Express e
 
 ```mermaid
 flowchart LR
-    U["Usuario y lector"] --> CF["Cloudflare Pages<br/>React + Vite"]
+    U["Usuario y lector"] --> CF["Cloudflare Workers<br/>React + Vite"]
     CF --> FA["Firebase Authentication"]
     CF --> R["Render<br/>API Express"]
     R --> GS["Google Sheets"]
@@ -143,11 +143,11 @@ Respuesta esperada:
 
 Render puede tardar cerca de un minuto en responder después de quince minutos de inactividad. Esto es normal en el plan gratuito.
 
-## 6. Publicar el frontend en Cloudflare Pages
+## 6. Publicar el frontend en Cloudflare Workers
 
 1. Abre Cloudflare Dashboard.
 2. Entra a **Workers & Pages**.
-3. Selecciona **Create > Pages > Import an existing Git repository**.
+3. Selecciona **Create > Import a repository** y elige Workers.
 4. Conecta GitHub y selecciona `iglesia-app`.
 5. Configura:
 
@@ -158,8 +158,9 @@ Render puede tardar cerca de un minuto en responder después de quince minutos d
 | Framework preset | Vite |
 | Build command | `npm run build` |
 | Build output directory | `dist` |
+| Deploy command | `npx wrangler deploy` |
 
-6. Agrega variables de construcción:
+6. Agrega estas variables en **Build variables and secrets**, no como variables de ejecución del Worker. Escribe las URL como texto simple, sin corchetes ni formato Markdown:
 
 ```env
 NODE_VERSION=22
@@ -174,7 +175,7 @@ VITE_DEMO_MODE=true
 https://iglesia-app.pages.dev
 ```
 
-El archivo `public/_redirects` ya está incluido para que rutas como `/registro` y `/reportes` funcionen al recargar la página.
+El archivo `wrangler.jsonc` ya configura `single-page-application`, por lo que rutas como `/registro` y `/reportes` funcionarán al recargar la página. No agregues una regla `/* /index.html 200` en `_redirects`, porque Workers la interpreta como un bucle infinito.
 
 ## 7. Conectar Cloudflare con Render
 
@@ -216,8 +217,8 @@ GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\
 1. Crea un proyecto de Firebase.
 2. Activa **Authentication > Sign-in method > Google**.
 3. Registra una aplicación web.
-4. En Firebase agrega `iglesia-app.pages.dev` en **Authentication > Settings > Authorized domains**.
-5. En Cloudflare Pages configura:
+4. En Firebase agrega el dominio asignado, por ejemplo `iglesia-app.usuario.workers.dev`, en **Authentication > Settings > Authorized domains**.
+5. En las variables de construcción de Cloudflare configura:
 
 ```env
 VITE_FIREBASE_API_KEY=
@@ -286,7 +287,7 @@ DEMO_MODE=false
 NODE_ENV=production
 ```
 
-Render reiniciará el servicio. Después, solicita en Cloudflare Pages un nuevo despliegue para que `VITE_DEMO_MODE=false` quede incorporado al frontend.
+Render reiniciará el servicio. Después, solicita en Cloudflare un nuevo despliegue para que `VITE_DEMO_MODE=false` quede incorporado al frontend.
 
 ## 9. Pruebas posteriores al despliegue
 
@@ -312,11 +313,12 @@ Render reiniciará el servicio. Después, solicita en Cloudflare Pages un nuevo 
 | Firma de Cloudinary inválida | Clave incorrecta o variables incompletas | Revisa las tres variables únicamente en Render |
 | Resend rechaza el correo | Dominio/remitente no verificado | Verifica el dominio y corrige `RESEND_FROM` |
 | Google devuelve permiso denegado | La hoja no está compartida | Comparte la hoja con la cuenta de servicio |
-| La ruta muestra 404 al recargar | `_redirects` no llegó a `dist` | Comprueba que `frontend/public/_redirects` exista y redespliega |
+| Cloudflare informa un bucle infinito en `_redirects` | Se agregó una regla propia de Pages a Workers | Elimina `frontend/public/_redirects`; `wrangler.jsonc` ya resuelve las rutas SPA |
+| La aplicación intenta conectarse a `localhost:4000` | `VITE_API_URL` fue creada como variable de ejecución o con formato Markdown | Créala como variable de construcción usando la URL simple de Render y vuelve a desplegar |
 
 ## 11. Actualizaciones posteriores
 
-Cada `git push` a `main` inicia despliegues automáticos en Render y Cloudflare Pages. Antes de enviar cambios ejecuta:
+Cada `git push` a `main` inicia despliegues automáticos en Render y Cloudflare Workers. Antes de enviar cambios ejecuta:
 
 ```bash
 npm run test
